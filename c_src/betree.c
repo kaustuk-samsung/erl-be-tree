@@ -5,6 +5,7 @@
 #include "erl_nif.h"
 
 #include "betree.h"
+#include "debug.h"
 
 // return values
 static ERL_NIF_TERM atom_ok;
@@ -301,7 +302,6 @@ static ERL_NIF_TERM nif_betree_make(ErlNifEnv* env, int argc, const ERL_NIF_TERM
             goto cleanup;
         }
     }
-
     retval = enif_make_tuple(env, 2, atom_ok, term);
 cleanup:
     return retval;
@@ -439,6 +439,7 @@ static ERL_NIF_TERM nif_betree_insert_sub(ErlNifEnv* env, int argc, const ERL_NI
     else {
         retval = atom_error;
     }
+    write_dot_file(betree);
 cleanup:
     return retval;
 }
