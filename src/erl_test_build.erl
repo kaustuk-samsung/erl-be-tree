@@ -10,6 +10,7 @@ hello_world() ->
                [{width, int, disallow_undefined},
                 {height, int, disallow_undefined},
                 {types, int_list, disallow_undefined}]],
+                
     {ok, Betree} = erl_betree:betree_make(Domains),
         Expr1 = <<"(((width = 100) and (height = 200) " 
               "and (1 in types) and true and true)) and (((exchange = 1) " 
@@ -17,7 +18,7 @@ hello_world() ->
     {ok, Sub} = erl_betree:betree_make_sub(Betree, 1, [], Expr1),
     ok = erl_betree:betree_insert_sub(Betree, Sub),
     Expr2 = <<"(((width = 100) and (height = 200) " 
-              "and (1 in types) and true and true)) and (((exchange = 2) " 
+              "and (1 in types) and true and true)) and (((exchange = 1) " 
               "and (member_id = 0) and true)) and geo_within_radius(100.0, 100.0, 10.0)">>,
     {ok, Sub2} = erl_betree:betree_make_sub(Betree, 2, [], Expr2),
     ok = erl_betree:betree_insert_sub(Betree, Sub2),
@@ -32,4 +33,5 @@ hello_world() ->
               "and (1 in types) and true and true)) and (((exchange = 1) " 
               "and (member_id = 1) and true)) and geo_within_radius(100.0, 100.0, 10.0)">>,
     {ok, Sub4} = erl_betree:betree_make_sub(Betree, 4, [], Expr4),
-    ok = erl_betree:betree_insert_sub(Betree, Sub4).
+    ok = erl_betree:betree_insert_sub(Betree, Sub4),
+    erl_betree:print_betree(Betree).
