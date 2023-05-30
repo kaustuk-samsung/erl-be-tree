@@ -5,6 +5,7 @@
 #include "erl_nif.h"
 
 #include "betree.h"
+#include "debug.h"
 
 // return values
 static ERL_NIF_TERM atom_ok;
@@ -301,7 +302,6 @@ static ERL_NIF_TERM nif_betree_make(ErlNifEnv* env, int argc, const ERL_NIF_TERM
             goto cleanup;
         }
     }
-
     retval = enif_make_tuple(env, 2, atom_ok, term);
 cleanup:
     return retval;
@@ -439,6 +439,7 @@ static ERL_NIF_TERM nif_betree_insert_sub(ErlNifEnv* env, int argc, const ERL_NI
     else {
         retval = atom_error;
     }
+    write_dot_file(betree);
 cleanup:
     return retval;
 }
@@ -920,6 +921,27 @@ cleanup:
     return retval;
 }
 
+static ERL_NIF_TERM nif_print_betree(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[]){
+
+    ERL_NIF_TERM retval;
+    if(argc != 1) {
+        retval = enif_make_badarg(env);
+        goto cleanup;
+    }
+
+    // enif_fprintf(stdout, "argument is correct. bye!!\n");
+    struct betree* betree = get_betree(env, argv[0]);
+    if(betree == NULL) {
+        retval = enif_make_badarg(env);
+        goto cleanup;
+    }
+    write_dot_file(betree);
+    retval = enif_make_tuple2(env, atom_ok, atom_true);
+
+cleanup:
+    return retval;
+}
+
 /*static ERL_NIF_TERM nif_betree_delete(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])*/
 /*{*/
     /*ERL_NIF_TERM retval;*/
@@ -948,7 +970,8 @@ static ErlNifFunc nif_functions[] = {
     {"betree_make_sub", 4, nif_betree_make_sub, 0},
     {"betree_insert_sub", 2, nif_betree_insert_sub, 0},
     {"betree_exists", 2, nif_betree_exists, 0},
-    {"betree_search", 2, nif_betree_search, 0}
+    {"betree_search", 2, nif_betree_search, 0},
+    {"print_betree", 1, nif_print_betree, 0}
     /*{"betree_delete", 2, nif_betree_delete, 0}*/
 };
 
